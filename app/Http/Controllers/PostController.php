@@ -22,11 +22,11 @@ class PostController extends Controller implements HasMiddleware
     //Display a listing of the resource.
     public function index()
     {
-        $post = Post::all();
+        $post = Post::with('user')->latest()->get();
 
         return response()->json([
             'status' => true,
-            'data' => $post
+            'data' => $post,
         ]);
     }
 
@@ -45,7 +45,8 @@ class PostController extends Controller implements HasMiddleware
 
         return response()->json([
             'status' => true,
-            'data' => $post
+            'data' => $post,
+            'user' => $post->user
         ]);
     }
 
@@ -53,11 +54,11 @@ class PostController extends Controller implements HasMiddleware
     //Display the specified resource. 
     public function show(Post $post)
     {
-        $post = Post::get();
 
         return response()->json([
             'status' => true,
-            'data' => $post
+            'data' => $post,
+            'user' => $post->user
         ]);
     }
 
@@ -87,7 +88,7 @@ class PostController extends Controller implements HasMiddleware
     public function destroy(Post $post)
     {
         Gate::authorize('modify', $post); //implementing the modify function in the post policy.
-        
+
         $post->delete();
 
         return response()->json([
